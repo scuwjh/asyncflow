@@ -1,0 +1,6 @@
+2025-10-23 18:54:24.264::::::ERROR:::bbbaf412-7b7c-40f7-8452-1101a2dc4fe7:::734:::net_tools.go.189 tools.SendRequest:::Client.Do err Post "http://127.0.0.1:41555/v1/hold_tasks?limit=100&task_type=lark": dial tcp 127.0.0.1:41555: connect: connection refused
+
+2025-10-23 18:54:24.264::::::ERROR:::bbbaf412-7b7c-40f7-8452-1101a2dc4fe7:::734:::schedule.go.218 tasksdk.(*TaskMgr).hold:::taskRpc.GetTaskList trigger.SendJsonRequest, [err:Post "http://127.0.0.1:41555/v1/hold_tasks?limit=100&task_type=lark": dial tcp 127.0.0.1:41555: connect: connection refused]
+
+2025-10-23 18:54:24.264::::::ERROR:::bbbaf412-7b7c-40f7-8452-1101a2dc4fe7:::734:::schedule.go.163 tasksdk.(*TaskMgr).schedule:::p.hold err trigger.SendJsonRequest, [err:Post "http://127.0.0.1:41555/v1/hold_tasks?limit=100&task_type=lark": dial tcp 127.0.0.1:41555: connect: connection refused]
+
