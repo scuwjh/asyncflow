@@ -19,6 +19,7 @@ func init() {
 	tasksdk.InitSvr(config.Conf.FlowsvrAddr, config.Conf.RedisLockAddr, config.Conf.RedisLockPassword)
 }
 
+// W:测试一下git
 func main() {
 	larkTask := tasksdk.TaskHandler{
 		TaskType: "lark",
