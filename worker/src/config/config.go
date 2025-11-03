@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// 包级全局变量
 var Conf *TomlConfig
 
 // TomlConfig 配置
@@ -22,7 +23,7 @@ func (c *TomlConfig) LoadConfig() {
 	if _, err := os.Stat(GetConfigPath()); err != nil {
 		panic(err)
 	}
-
+	// W:从TOML文件中读取配置并写入Conf中的三个字段
 	if _, err := toml.DecodeFile(GetConfigPath(), &c); err != nil {
 		panic(err)
 	}

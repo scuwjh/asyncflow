@@ -2,14 +2,15 @@ package rtm
 
 import (
 	"fmt"
+	"runtime"
+	"runtime/debug"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/niuniumart/asyncflow/flowsvr/src/config"
 	"github.com/niuniumart/asyncflow/flowsvr/src/db"
 	"github.com/niuniumart/gosdk/martlog"
 	"github.com/niuniumart/gosdk/requestid"
-	"runtime"
-	"runtime/debug"
-	"time"
 )
 
 // TaskRuntime 短任务运行时
@@ -18,12 +19,14 @@ type TaskRuntime struct {
 
 // Run 开始运行
 func (p *TaskRuntime) Run() {
+	// W:保留扩展性（日志记录或权限检查）；隐藏内部实现细节
 	p.run()
 }
 
 func (p *TaskRuntime) run() {
 	/******  dealLongTimeProcess *******/
 	go func() {
+		// W:如果没有defer配合panic恢复，任何一个go线程的崩溃都是导致程序退出，影响其他正在执行的任务
 		defer func() {
 			if err := recover(); err != nil {
 				martlog.Errorf("WatTaskRuntime PanicRecover,Error:%s", err)
@@ -38,6 +41,7 @@ func (p *TaskRuntime) run() {
 		}()
 		requestIDStr := fmt.Sprintf("%+v", uuid.New())
 		requestid.Set(requestIDStr)
+		// W:超时任务处理逻辑
 		p.dealLongTimeProcess()
 	}()
 	/****** SubTable *******/
@@ -53,7 +57,7 @@ func (p *TaskRuntime) run() {
 				martlog.Errorf("panic stack info %s\n", stackInfo)
 			}
 		}()
-
+		// W:分表处理逻辑
 		p.subTable()
 	}()
 
@@ -70,6 +74,7 @@ func (p *TaskRuntime) run() {
 				martlog.Errorf("panic stack info %s\n", stackInfo)
 			}
 		}()
+		// W:更新位置信息处理逻辑【更新的是beginPos，endPos在分表时更新】
 		p.UpdateSchedulePos()
 	}()
 }
@@ -108,13 +113,16 @@ func (p *TaskRuntime) subTable() {
 
 func (p *TaskRuntime) dealLongTimeProcess() {
 	for {
+		// W:记录日志
 		martlog.Infof("short task deal long time process")
+		// W:定时等待，定期查询一下是否有超时任务
 		t := time.NewTimer(time.Duration(config.Conf.Task.LongProcessInterval) * time.Second)
 		<-t.C
 		/***** step 1: do get lock   *****/
 		// lockKey := SHORT_TASK_LONGTIME_DEAL_LOCK_KEY
 		/***** step 2: deal long process do  *****/
 		martlog.Infof("schedule do dealTimeoutProcessing")
+		// W:查询超时任务
 		p.dealTimeoutProcessing()
 		/***** step 3: do unlock *****/
 	}
@@ -168,7 +176,7 @@ func (p *TaskRuntime) subTableProcessing() {
 	for _, taskPos := range taskPosList {
 		taskType := taskPos.TaskType
 		endPos := fmt.Sprintf("%d", taskPos.ScheduleEndPos)
-		// GetAllTaskCount 获取所有任务数量
+		// GetAllTaskCount 获取endPos对应的任务表的任务数量
 		count, err := db.TaskNsp.GetAllTaskCount(db.DB, taskType, endPos)
 		if err != nil {
 			martlog.Errorf("db.TaskNsp.GetAllTaskCount %s", err.Error())
@@ -196,27 +204,31 @@ func (p *TaskRuntime) subTableProcessing() {
 }
 
 func (p *TaskRuntime) dealTimeoutProcessing() {
+	// W:读取所有任务类型配置
 	taskTypeCfgList, err := db.TaskTypeCfgNsp.GetTaskTypeCfgList(db.DB)
 	if err != nil {
 		martlog.Errorf("visit t_task_type_cfg err %s", err.Error())
 		return
 	}
+	// W:遍历所有任务类型，并针对每种任务类型进行处理
 	for _, taskTypeCfg := range taskTypeCfgList {
 		p.dealTimeoutProcessingWithType(taskTypeCfg)
 	}
 }
 
 func (p *TaskRuntime) dealTimeoutProcessingWithType(taskCfg *db.TaskScheduleCfg) {
+	// W:获取任务位置信息
 	taskPos, err := db.TaskPosNsp.GetTaskPos(db.DB, taskCfg.TaskType)
 	if err != nil {
 		martlog.Errorf("db.TaskPosNsp.GetTaskPos err %s", err.Error())
 		return
 	}
-
+	// W:确认超时阈值
 	maxProcessTime := config.Conf.Task.MaxProcessTime
-	if int64(taskCfg.MaxProcessingTime) == 0 {
+	if int64(taskCfg.MaxProcessingTime) != 0 {
 		maxProcessTime = taskCfg.MaxProcessingTime
 	}
+	// W:查询超时任务（SQL逻辑为当前时间戳-上次修改时间【modify_time】>超时阈值）
 	taskList, err := db.TaskNsp.GetLongTimeProcessing(db.DB, taskCfg.TaskType,
 		fmt.Sprintf("%d", taskPos.ScheduleBeginPos), maxProcessTime, 1000)
 	if err != nil {

@@ -54,11 +54,12 @@ type TaskConfig struct {
 
 // LoadConfig 导入配置
 func (c *TomlConfig) LoadConfig() {
-
+	// W:检查配置文件是否存在
 	if _, err := os.Stat(GetConfigPath()); err != nil {
 		panic(err)
 	}
-
+	// W:解析TOML文件，&c是TomlConfig的指针，用于接收解析后的数据；解析过程依赖于结构体字段上的
+	// toml标签，这些标签告知解析器如何将toml文件中的键映射到结构体字段
 	if _, err := toml.DecodeFile(GetConfigPath(), &c); err != nil {
 		panic(err)
 	}

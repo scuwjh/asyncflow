@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/niuniumart/asyncflow/flowsvr/src/cache"
 	"github.com/niuniumart/asyncflow/flowsvr/src/ctrl/task"
@@ -10,10 +11,11 @@ import (
 
 // InitResource 初始化服务资源
 func InitResource() {
+	// W:初始化数据库连接并验证是否可用
 	if err := db.InitDB(); err != nil {
 		panic(fmt.Sprintf("InitDB err %s", err.Error()))
 	}
-
+	// W:初始化Redis连接并验证是否可用
 	if err := cache.InitCache(); err != nil {
 		panic(fmt.Sprintf("InitCache err %s", err.Error()))
 	}

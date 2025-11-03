@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/niuniumart/asyncflow/taskutils/constant"
 	"github.com/niuniumart/asyncflow/worker/src/config"
 	"github.com/niuniumart/asyncflow/worker/src/tasksdk"
@@ -11,6 +12,7 @@ import (
 )
 
 // 初始化
+// W:init()函数在导入包后自动执行，不需要在main()函数中显式调用
 func init() {
 	config.Init()
 	// 初始化分布式锁连接，还有定下flowsvr的地址

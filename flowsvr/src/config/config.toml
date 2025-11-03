@@ -5,9 +5,9 @@ open_tls                        = false
 
 
 [MySQL]
-url                             = "192.168.5.51:3306"
-user                            = "root"
-pwd                             = "123456"
+url                             = "127.0.0.1:3306"
+user                            = "wjh"
+pwd                             = "qazpl,"
 db_name                         = "asyncflow"
 # 空闲连接
 max_idle = 2000
@@ -17,7 +17,7 @@ max_active = 10000
 idle_timeout = 500
 
 [Redis]
-url  = "192.168.5.52:6379"
+url  = "127.0.0.1:6379"
 auth = "123456"
 # 空闲连接
 max_idle = 20

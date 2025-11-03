@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
+	"testing"
+
 	"github.com/niuniumart/asyncflow/flowsvr/src/config"
 	"github.com/niuniumart/asyncflow/flowsvr/src/db"
 	"github.com/niuniumart/asyncflow/taskutils/rpc"
@@ -11,8 +14,6 @@ import (
 	"github.com/niuniumart/gosdk/redislock"
 	"github.com/niuniumart/gosdk/tools"
 	"github.com/smartystreets/goconvey/convey"
-	"sync"
-	"testing"
 )
 
 // TestCreateTask 测试创建任务接口
@@ -22,7 +23,7 @@ func TestCreateTask(t *testing.T) {
 	convey.Convey("TestCreateTask", t, func() {
 		// case 1: input err
 		var rpc rpc.TaskRpc
-		rpc.Host = "http://43.139.192.217:41555"
+		rpc.Host = "http://127.0.0.1:41555"
 		var reqBody = new(model.CreateTaskReq)
 		reqBody.TaskData.TaskType = "lark"
 		reqBody.TaskData.TaskStage = "sendmsg"

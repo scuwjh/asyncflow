@@ -2,11 +2,12 @@ package task
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/niuniumart/asyncflow/flowsvr/src/constant"
 	"github.com/niuniumart/asyncflow/flowsvr/src/ctrl/ctrlmodel"
 	"github.com/niuniumart/asyncflow/flowsvr/src/db"
 	"github.com/niuniumart/asyncflow/taskutils/rpc/model"
-	"net/http"
 
 	"github.com/niuniumart/gosdk/martlog"
 
@@ -24,6 +25,7 @@ type GetTaskListHandler struct {
 }
 
 // GetTaskList 接口
+// W:可查询任何状态的任务列表，与hokdtasks调用了相同的底层查询方法；holdtasks仅查询pending状态的任务，
 func GetTaskList(c *gin.Context) {
 	var hd GetTaskListHandler
 	defer func() {

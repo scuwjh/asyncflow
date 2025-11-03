@@ -19,7 +19,7 @@ CREATE TABLE `t_lark_task_1` (
                                  UNIQUE KEY `idx_task_id` (`task_id`),
                                  KEY `idx_user_id` (`user_id`),
                                  KEY `idx_tasktype_status_modify_time` (`status`,`order_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 CREATE TABLE `t_schedule_cfg` (
@@ -33,7 +33,7 @@ CREATE TABLE `t_schedule_cfg` (
                                   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
                                   `modify_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                   PRIMARY KEY (`task_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 CREATE TABLE `t_schedule_pos` (
@@ -45,7 +45,7 @@ CREATE TABLE `t_schedule_pos` (
                                   `modify_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                   PRIMARY KEY (`id`),
                                   UNIQUE KEY `idx_task_type` (`task_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 insert into t_schedule_cfg(task_type, schedule_limit, schedule_interval, max_processing_time,
 max_retry_num, retry_interval, max_retry_interval) values("lark", 100, 10, 30, 3, 5, 30);
